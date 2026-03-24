@@ -1,4 +1,4 @@
-# Academi# Centro de Treinamento - Sistema de Gestão
+# Academia# Centro de Treinamento - Sistema de Gestão
 
 Um sistema web no formato Single Page Application (SPA) para gerenciamento de uma academia, contendo um portal para os alunos e um painel administrativo. O projeto não utiliza backend, fazendo a persistência de dados localmente através do localStorage do navegador.
 
