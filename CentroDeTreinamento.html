@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro De Treinamento</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/jpeg" href="img/academia.jpg">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo"> Centro de Treinamento </div>  
+            <div class="header-buttons">
+                <div id="headerMotivation" class="motivation-text">💪 O corpo é um templo, cuide dele com dedicação!</div>
+                <button id="headerLoginBtn" class="header-btn inactive" onclick="login()" style="display: none;">Conectado</button>
+                <button id="headerLogoutBtn" class="header-btn inactive" onclick="logout()" style="display: none;">Sair</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- COLUNA LATERAL (Avisos + Menu) -->
+        <div class="sidebar-column">
+            <!-- ALERTA GLOBAL -->
+            <div id="globalAnnouncement" class="sidebar-announcement" style="display: none;">
+                <span class="close-popup" onclick="this.parentElement.style.display='none'">&times;</span>
+                <span id="globalAnnouncementText"></span>
+            </div>
+
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="switchTab('checkin', event)">Check-in</button>
+                <button class="nav-tab" onclick="switchTab('workouts', event)">Treinos</button>
+                <button class="nav-tab" onclick="switchTab('plans', event)">Planos e Preços</button>
+                <button class="nav-tab" onclick="switchTab('videos', event)">Vídeos de Instrução</button>
+                <button class="nav-tab" onclick="switchTab('personalized', event)">Plano Personalizado</button>
+                <button class="nav-tab" onclick="switchTab('history', event)">Histórico de Check-in</button>
+                <button class="nav-tab" onclick="switchTab('profile', event)">Perfil</button>
+                <button id="navAdminTab" class="nav-tab" onclick="switchTab('admin', event)" style="display: none; border-left-color: var(--color-warning); color: var(--color-warning);">Painel Admin ⚙️</button>
+            </div>
+        </div>
+
+        <!-- SEÇÃO DE CHECK-IN -->
+        <div id="checkin" class="main-content active">
+            <div class="checkin-container">
+                <h2>Bem-vindo à Academia!</h2>
+                <p class="checkin-status">Registre seu acesso na academia</p>
+                
+                <div class="member-input">
+                    <button class="btn-primary" onclick="checkIn()" style="width: 100%; margin-top: 15px;">Check-in</button>
+                    <button id="loginBtn" class="btn-secondary" onclick="login()" style="width: 100%; margin-top: 15px;">Entrar</button>
+                    <button id="registerBtn" class="btn-secondary" onclick="toggleModal('registerModal', true)" style="width: 100%; margin-top: 15px;">Criar Conta</button>
+                </div>
+
+                <div id="checkinResult" class="checkin-result"></div>
+            </div>
+        </div>
+
+        <!-- modal de mensagem personalizada -->
+        <div id="messageModal" class="modal">
+            <div class="modal-content" onclick="event.stopPropagation()">
+                <!-- botão de fechar manual removido; o modal vai se esconder automaticamente ou fechar ao clicar fora -->
+                <p id="modalText"></p>
+            </div>
+        </div>
+
+        <!-- modal de login -->
+        <div id="loginModal" class="login-modal circular-overlay">
+            <div class="login-content circular-theme">
+                <span class="modal-close" onclick="toggleModal('loginModal', false)">&times;</span>
+                <div class="circular-header">
+                    <h3>LOGIN</h3>
+                    <div class="avatar-icon" id="loginAvatarIcon"><img src="img/meu-icone.png" alt="Ícone de Login"></div>
+                </div>
+                <form id="loginForm" class="circular-form">
+                    <div class="form-group">
+                        <input type="email" id="loginEmail" autocomplete="username" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="loginPassword" autocomplete="current-password" placeholder="Senha" required>
+                    </div>
+                    <button type="submit" class="btn-primary circular-btn">ENTRAR</button>
+                </form>
+                <a href="#" class="forgot-pwd-link" onclick="toggleModal('loginModal', false); setTimeout(() => toggleModal('recoveryModal', true), 300);">Esqueci minha senha?</a>
+                <p class="switch-form-text">Não tem conta? <a href="#" onclick="toggleModal('loginModal', false); setTimeout(() => toggleModal('registerModal', true), 300);">Criar Conta</a></p>
+            </div>
+        </div>
+
+        <!-- modal de recuperação de senha -->
+        <div id="recoveryModal" class="login-modal circular-overlay">
+            <div class="login-content circular-theme">
+                <span class="modal-close" onclick="toggleModal('recoveryModal', false)">&times;</span>
+                <div class="circular-header">
+                    <h3>RECUPERAR SENHA</h3>
+                </div>
+                <form id="recoveryForm" class="circular-form">
+                    <div class="form-group">
+                        <input type="email" id="recEmail" autocomplete="username" placeholder="Email Cadastrado" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" id="recBirth" title="Data de Nascimento (Verificação de Segurança)" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="recNewPassword" autocomplete="new-password" placeholder="Criar Nova Senha" required>
+                    </div>
+                    <button type="submit" class="btn-primary circular-btn">REDEFINIR</button>
+                </form>
+                <p class="switch-form-text">Lembrou a senha? <a href="#" onclick="toggleModal('recoveryModal', false); setTimeout(() => toggleModal('loginModal', true), 300);">Entrar</a></p>
+            </div>
+        </div>
+
+        <!-- modal de registro -->
+        <div id="registerModal" class="register-modal circular-overlay">
+            <div class="register-content circular-theme">
+                <span class="modal-close" onclick="toggleModal('registerModal', false)">&times;</span>
+                <div class="circular-header">
+                    <h3>CRIAR CONTA</h3>
+                </div>
+                <form id="registerForm" class="circular-form">
+                    <div class="form-group">
+                        <input type="text" id="regName" placeholder="Nome Completo" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" id="regBirth" title="Data de Nascimento" required>
+                    </div>
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <input type="number" id="regHeight" placeholder="Altura (cm)" required style="width: 50%;">
+                        <input type="number" id="regWeight" placeholder="Peso (kg)" required style="width: 50%;">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="regEmail" autocomplete="username" placeholder="Email" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="regPassword" autocomplete="new-password" placeholder="Senha" required>
+                    </div>
+                    <button type="submit" class="btn-primary circular-btn">CADASTRAR</button>
+                </form>
+                <p class="switch-form-text">Já possui conta? <a href="#" onclick="toggleModal('registerModal', false); setTimeout(() => toggleModal('loginModal', true), 300);">Entrar</a></p>
+            </div>
+        </div>
+
+        <!-- MODAL DE PAGAMENTO (CHECKOUT SIMULADO) -->
+        <div id="paymentModal" class="modal">
+            <div class="modal-content" style="background: var(--color-surface); max-width: 850px; padding: 30px;">
+                <span class="modal-close" onclick="toggleModal('paymentModal', false)">&times;</span>
+                <h3 style="color: var(--color-primary); margin-bottom: 20px; text-align: center;">Pagamento Seguro 🔒</h3>
+                <p id="paymentPlanName" style="text-align: center; margin-bottom: 25px; color: var(--color-text-secondary);"></p>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 40px; align-items: center; justify-content: center;">
+                    <!-- CARTÃO VISUAL ANIMADO -->
+                    <div class="visual-card-container" style="margin-bottom: 0;">
+                    <div class="visual-card" id="visualCard">
+                        <div class="visual-card-inner" id="visualCardInner">
+                            <div class="card-front">
+                                <div class="card-logo" id="cardLogo">💳</div>
+                                <div class="card-chip"></div>
+                                <div class="card-number" id="visualCardNumber">#### #### #### ####</div>
+                                <div class="card-bottom">
+                                    <div class="card-name-group">
+                                        <span class="card-label">Titular</span>
+                                        <div class="card-name" id="visualCardName">NOME DO TITULAR</div>
+                                    </div>
+                                    <div class="card-date-group">
+                                        <span class="card-label">Validade</span>
+                                        <div class="card-date" id="visualCardDate">MM/AA</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-back">
+                                <div class="card-strip"></div>
+                                <div class="card-cvv-band">
+                                    <span id="visualCardCvv">***</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                    <form id="paymentForm" style="flex: 1; min-width: 320px;">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--color-text); font-weight: 600;">Nome impresso no Cartão</label>
+                        <input type="text" id="payName" required style="width: 100%; padding: 12px; background: var(--color-bg); border: 1px solid var(--color-border-strong); color: var(--color-text); border-radius: 4px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--color-text); font-weight: 600;">Número do Cartão</label>
+                        <input type="text" id="payCard" placeholder="0000 0000 0000 0000" maxlength="19" required style="width: 100%; padding: 12px; background: var(--color-bg); border: 1px solid var(--color-border-strong); color: var(--color-text); border-radius: 4px;">
+                    </div>
+                    <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label style="display: block; margin-bottom: 5px; color: var(--color-text); font-weight: 600;">Validade</label>
+                            <input type="text" id="payDate" placeholder="MM/AA" maxlength="5" required style="width: 100%; padding: 12px; background: var(--color-bg); border: 1px solid var(--color-border-strong); color: var(--color-text); border-radius: 4px;">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label style="display: block; margin-bottom: 5px; color: var(--color-text); font-weight: 600;">CVV</label>
+                            <input type="password" id="payCvv" placeholder="123" maxlength="4" required style="width: 100%; padding: 12px; background: var(--color-bg); border: 1px solid var(--color-border-strong); color: var(--color-text); border-radius: 4px;">
+                        </div>
+                    </div>
+                    <button type="submit" id="paymentSubmitBtn" class="btn-primary" style="width: 100%; border-radius: 4px; position: relative;">Confirmar Assinatura</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Registro de Progresso -->
+        <div id="progressModal" class="login-modal">
+            <div class="login-content">
+                <span class="modal-close" onclick="toggleModal('progressModal', false)">&times;</span>
+                <h3 id="progressModalTitle">Registrar Progresso para...</h3>
+                <form id="progressForm">
+                    <div class="form-group">
+                        <label>Séries (Sets)</label>
+                        <input type="number" id="progressSets" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Repetições (Reps)</label>
+                        <input type="number" id="progressReps" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Carga (Kg)</label>
+                        <input type="number" id="progressLoad" step="0.5" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Salvar Progresso</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Modal de Convite Premium -->
+        <div id="inviteModal" class="modal">
+            <div class="modal-content" style="background: var(--color-surface); width: 100%; max-width: 500px;">
+                <span class="modal-close" onclick="toggleModal('inviteModal', false)">&times;</span>
+                <h3 style="color: var(--color-accent); margin-bottom: 10px; text-align: center;">🎟️ Convidar um Amigo</h3>
+                <p style="color: var(--color-text-secondary); font-size: 0.9em; text-align: center; margin-bottom: 20px;">Você tem direito a trazer um acompanhante. Preencha os dados abaixo.</p>
+                <form id="inviteForm">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--color-text); font-weight: 600;">Nome Completo</label>
+                        <input type="text" id="inviteName" placeholder="Nome do amigo" required style="width: 100%; padding: 12px; background: var(--color-bg); border: 1px solid var(--color-border-strong); color: var(--color-text); border-radius: 4px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--color-text); font-weight: 600;">Data de Nascimento</label>
+                        <input type="date" id="inviteBirth" required style="width: 100%; padding: 12px; background: var(--color-bg); border: 1px solid var(--color-border-strong); color: var(--color-text); border-radius: 4px;">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 25px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--color-text); font-weight: 600;">E-mail</label>
+                        <input type="email" id="inviteEmail" placeholder="amigo@email.com" required style="width: 100%; padding: 12px; background: var(--color-bg); border: 1px solid var(--color-border-strong); color: var(--color-text); border-radius: 4px;">
+                    </div>
+                    <button type="submit" class="btn-primary" style="width: 100%; border-radius: 4px;">Gerar Convite</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- SEÇÃO DE TREINOS -->
+        <div id="workouts" class="main-content">
+            <div id="workoutsList"></div>
+            <div id="workoutDetail" style="display: none;"></div>
+        </div>
+
+        <!-- SEÇÃO DE PLANOS E PREÇOS -->
+        <div id="plans" class="main-content">
+            <div class="plans-container">
+                <h2 style="color: var(--color-primary); margin-bottom: 10px; text-align: center;">Escolha seu Plano 💎</h2>
+                <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 30px;">Invista na sua saúde com nossos planos sem taxa de adesão.</p>
+                
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Basic</h3>
+                        <div class="price">R$ 89<span>/mês</span></div>
+                        <ul class="features">
+                            <li>✅ Acesso das 09h às 16h</li>
+                            <li>✅ Acesso aos treinos padrão</li>
+                            <li>❌ Plano personalizado</li>
+                        </ul>
+                        <button id="btn-plan-Basic" class="btn-primary" onclick="openPaymentModal('Basic', 89)">Assinar Basic</button>
+                    </div>
+                    <div class="pricing-card premium">
+                        <div class="badge">Mais Popular</div>
+                        <h3>Premium</h3>
+                        <div class="price">R$ 119<span>/mês</span></div>
+                        <ul class="features">
+                            <li>✅ Acesso livre 24h</li>
+                            <li>✅ Acesso a todos os vídeos</li>
+                            <li>✅ Plano de treino personalizado</li>
+                            <li>✅ Leve até 5 amigos por mês</li>
+                        </ul>
+                        <button id="btn-plan-Premium" class="btn-primary" onclick="openPaymentModal('Premium', 119)">Assinar Premium</button>
+                    </div>
+                    <div class="pricing-card">
+                        <h3>Anual</h3>
+                        <div class="price">R$ 899<span>/ano</span></div>
+                        <ul class="features">
+                            <li>✅ Todos os benefícios Premium</li>
+                            <li>✅ Equivalente a 2 meses grátis</li>
+                            <li>✅ Camiseta exclusiva da academia</li>
+                        </ul>
+                        <button id="btn-plan-Anual" class="btn-primary" onclick="openPaymentModal('Anual', 899)">Assinar Anual</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO DE VÍDEOS -->
+        <div id="videos" class="main-content">
+            <div id="videosList" class="video-container">
+                <h2>📹 Vídeos de Instrução</h2>
+                
+                <div style="margin-bottom: 25px;">
+                    <input type="text" id="videoSearchInput" placeholder="Pesquisar aula, músculo ou exercício..." style="width: 100%; padding: 12px; background: var(--color-bg); border: 1px solid var(--color-border-strong); border-left: 3px solid var(--color-primary); color: var(--color-text); border-radius: 0; font-size: 0.95em;" oninput="renderVideoGrid()">
+                </div>
+                <div id="videoGrid" class="workout-grid"></div>
+            </div>
+            <div id="videoDetail" style="display: none;"></div>
+        </div>
+
+        <!-- SEÇÃO DE PLANO PERSONALIZADO -->
+        <div id="personalized" class="main-content">
+            <div class="plan-container">
+                <h2 style="color: var(--color-primary); margin-bottom: 30px;">Crie Seu Plano Personalizado 📋</h2>
+                
+                            <div id="plan-content">
+                                <div class="plan-form">
+                                    <div class="form-group">
+                                        <label>Nome Completo</label>
+                                        <input type="text" id="planName" placeholder="Seu nome">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Objetivo Principal</label>
+                                        <select id="planGoal">
+                                            <option>Ganho de Massa Muscular</option>
+                                            <option>Perda de Peso</option>
+                                            <option>Condicionamento Físico</option>
+                                            <option>Força</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Nível de Experiência</label>
+                                        <select id="planLevel">
+                                            <option>Iniciante</option>
+                                            <option>Intermediário</option>
+                                            <option>Avançado</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Dias Disponíveis por Semana</label>
+                                        <select id="planDays">
+                                            <option>3 dias</option>
+                                            <option>4 dias</option>
+                                            <option>5 dias</option>
+                                            <option>6 dias</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Restrições ou Lesões</label>
+                                        <textarea id="planRestrictions" placeholder="Informe se tem alguma lesão ou restrição" rows="3"></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Observações Adicionais</label>
+                                        <textarea id="planNotes" placeholder="Observações gerais" rows="3"></textarea>
+                                    </div>
+                                </div>
+                
+                                <button class="btn-primary" onclick="generatePlan()">Gerar Meu Plano Personalizado</button>
+                
+                                <div id="generatedPlan" style="margin-top: 30px; display: none;"></div>
+                            </div>            </div>
+        </div>
+
+        <!-- SEÇÃO DE HISTÓRICO -->
+        <div id="history" class="main-content">
+            <div class="history-container">
+                <div class="history-header">
+                    <h2>🗓️ Histórico de Check-in</h2>
+                    <button class="btn-secondary" onclick="clearCheckInHistory()">Limpar Histórico</button>
+                </div>
+                <div id="historyContent">
+                    <!-- A tabela de histórico será renderizada aqui pelo JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- SEÇÃO DE PERFIL -->
+        <div id="profile" class="main-content">
+            <div id="profile-content">
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                                    <!-- Espaço reservado para o avatar -->
+                            <img src="img/mans.jpg" alt="User Avatar">
+                        </div>
+                        <div class="profile-info">
+                            <h2 id="profileName">Nome do Aluno</h2>
+                            <p id="profileEmail">email@aluno.com</p>
+                            <p id="profileBirth">Data de Nascimento: 01/01/2000</p>
+                            <button class="btn-secondary" onclick="editProfile()">Editar Perfil</button>
+                        </div>
+                    </div>
+                    <div class="profile-stats">
+                        <h3>Minhas Estatísticas</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h4>Check-ins</h4>
+                                <p id="statsCheckins">0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Treinos Completos</h4>
+                                <p id="statsWorkouts">0</p>
+                            </div>
+                            <div class="stat-card">
+                                <h4>Membro Desde</h4>
+                                <p id="statsMemberSince">--</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="profile-progress">
+                        <h3>Histórico de Progresso</h3>
+                        <div id="progressHistoryContent">
+                                    <!-- A tabela de histórico de progresso será renderizada aqui -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SEÇÃO DO PAINEL ADMIN -->
+        <div id="admin" class="main-content">
+            <div class="history-container">
+                <h2 style="color: var(--color-warning); margin-bottom: 20px;">⚙️ Painel de Administração</h2>
+                <div id="adminDashboardContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="dados.js"></script>
+    <script src="script.js"></script>
+    <script src="usuario.js"></script>
+    <script src="pagamentos.js"></script>
+    <script src="admin.js"></script>
+    <script src="treinos.js"></script>
+</body>
+</html>
