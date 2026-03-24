@@ -30,7 +30,7 @@ Para o Administrador:
 1. Clone ou baixe este repositório.
 2. Certifique-se de que a pasta `img/` contém os arquivos de imagem utilizados no projeto.
 3. Abra o arquivo `CentroDeTreinamento.html` em qualquer navegador web. 
-4. (Opcional) Recomenda-se abrir utilizando uma extensão como o Live Server (VS Code) para evitar eventuais bloqueios de segurança do navegador ao carregar iframes.
+4. (Opcional) Recomenda abrir utilizando uma extensão como o Live Server (VS Code) para evitar eventuais bloqueios de segurança do navegador ao carregar iframes.
 
 ## Acesso Administrativo (Testes)
 
