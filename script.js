@@ -37,12 +37,7 @@ function initializeApp() {
         loggedInUser = JSON.parse(currentUser);
         updateHeaderWithUser();
         renderPersonalizedPlan();
-    } else {
-        // Exibe a tela de login via overlay para usuários não conectados
-        setTimeout(() => {
-            toggleModal('loginModal', true);
-        }, 500);
-    }
+    } 
 
     // Permite fechar o modal clicando fora do contêiner principal
     ['messageModal', 'loginModal', 'registerModal', 'recoveryModal', 'inviteModal', 'paymentModal', 'progressModal', 'editProfileModal'].forEach(modalId => {
