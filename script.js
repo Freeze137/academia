@@ -204,7 +204,8 @@ function switchTab(tab, event) {
 
 function checkIn() {
     if (!loggedInUser) {
-        showModal('Por favor, crie uma conta primeiro!');
+        showToast('Faça login para poder fazer o check-in.', 'info');
+        toggleModal('loginModal', true);
         return;
     }
 
