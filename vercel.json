@@ -1,10 +1,6 @@
 {
   "version": 2,
-  "public": true,
   "rewrites": [
     { "source": "/", "destination": "/CentroDeTreinamento.html" }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "outputDirectory": "."
+  ]
 }
