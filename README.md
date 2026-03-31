@@ -38,5 +38,6 @@ O sistema cria automaticamente um perfil de administrador na primeira execução
 
 * Email: admin@academia.com
 * Senha: admin
+academia-theta-ten.vercel.app
 
 
