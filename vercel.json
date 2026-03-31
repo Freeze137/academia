@@ -4,5 +4,7 @@
   "rewrites": [
     { "source": "/", "destination": "/CentroDeTreinamento.html" }
   ],
-  "cleanUrls": true
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "outputDirectory": "."
 }
