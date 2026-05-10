@@ -2489,12 +2489,3 @@ body.modal-open {
     border-radius: 12px;
     display: block;
 }
-/* ── Esconde scrollbar mantendo o scroll ── */
-html {
-    scrollbar-width: none;        /* Firefox */
-    -ms-overflow-style: none;     /* IE / Edge */
-}
-
-html::-webkit-scrollbar {
-    display: none;                /* Chrome / Safari */
-}
